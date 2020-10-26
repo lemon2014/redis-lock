@@ -1,6 +1,8 @@
 package org.lemon.redis.redislock.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.redisson.Redisson;
+import org.redisson.config.Config;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +15,11 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @EnableCaching
 public class RedisConfig extends CachingConfigurerSupport {
 
+    /**
+     *
+     * 这里不配置走默认配置,连接本地的redis
+     *
+     */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 
@@ -41,5 +48,13 @@ public class RedisConfig extends CachingConfigurerSupport {
 //        template.afterPropertiesSet();
 
         return template;
+    }
+
+    @Bean
+    public Redisson redisson(){
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://localhost:6379").setDatabase(0);
+        return (Redisson)Redisson.create(config);
+
     }
 }
